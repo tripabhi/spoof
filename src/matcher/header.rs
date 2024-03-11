@@ -1,5 +1,7 @@
-use crate::matchers::Match;
+use crate::core::mock::Match;
 use crate::net::request::Request;
+use base64::prelude::BASE64_STANDARD;
+use base64::Engine;
 use http::{HeaderName, HeaderValue};
 use regex::Regex;
 use std::collections::HashSet;
@@ -134,5 +136,57 @@ impl Match for HeaderValueContainsMatcher {
                     .filter_map(|val| HeaderValue::from_str(val).ok())
             })
             .all(|item| self.1.contains(&item))
+    }
+}
+
+pub struct BasicAuthMatcher(HeaderExactMatcher);
+
+impl BasicAuthMatcher {
+    pub fn from_credentials<T, U>(username: T, password: U) -> Self
+    where
+        T: AsRef<str>,
+        U: AsRef<str>,
+    {
+        Self::from_token(BASE64_STANDARD.encode(format!(
+            "{}:{}",
+            username.as_ref(),
+            password.as_ref()
+        )))
+    }
+
+    pub fn from_token<T>(token: T) -> Self
+    where
+        T: AsRef<str>,
+    {
+        Self(HeaderExactMatcher::new(
+            "Authorization",
+            vec![&*format!("Basic {}", token.as_ref())],
+        ))
+    }
+}
+
+impl Match for BasicAuthMatcher {
+    fn matches(&self, request: &Request) -> bool {
+        self.0.matches(request)
+    }
+}
+
+pub struct BearerTokenMatcher(HeaderExactMatcher);
+
+impl BearerTokenMatcher {
+    pub fn from_token<T>(token: T) -> Self
+    where
+        T: AsRef<str>,
+    {
+        Self(HeaderExactMatcher::new(
+            "Authorization",
+            vec![&*format!("Bearer {}", token.as_ref())],
+        ))
+    }
+}
+
+impl Match for BearerTokenMatcher {
+    fn matches(&self, request: &Request) -> bool {
+        self.0.matches(request)
     }
 }

@@ -1,35 +1,21 @@
-use crate::matchers::body::{BodyContainsMatcher, BodyExactMatcher, BodyPartialJsonMatcher};
-use crate::matchers::header::{
-    HeaderExactMatcher, HeaderExistsMatcher, HeaderValueContainsMatcher, HeaderValueRegexMatcher,
+use crate::core::mock::Match;
+use crate::matcher::body::{BodyContainsMatcher, BodyExactMatcher, BodyPartialJsonMatcher};
+use crate::matcher::header::{
+    BasicAuthMatcher, BearerTokenMatcher, HeaderExactMatcher, HeaderExistsMatcher,
+    HeaderValueContainsMatcher, HeaderValueRegexMatcher,
 };
-use crate::matchers::method::MethodMatcher;
-use crate::matchers::path::{PathExactMatcher, PathRegexMatcher};
-use crate::matchers::query::{
-    QueryParamContainsMatcher, QueryParamExactMatcher, QueryParamMissingMatcher,
-};
+use crate::matcher::method::MethodMatcher;
+use crate::matcher::path::{PathExactMatcher, PathRegexMatcher};
+use crate::matcher::query::{QueryParamCaseInsensitiveMatcher, QueryParamContainsMatcher, QueryParamExactMatcher, QueryParamExistsMatcher, QueryParamMissingMatcher, QueryParamRegexMatcher};
 use crate::net::request::Request;
 use http::{HeaderName, HeaderValue, Method};
 use serde::Serialize;
 
-mod body;
-mod header;
+pub mod body;
+pub mod header;
 pub mod method;
-mod path;
-mod query;
-
-pub trait Match: Send + Sync {
-    fn matches(&self, request: &Request) -> bool;
-}
-
-impl<F> Match for F
-where
-    F: Fn(&Request) -> bool,
-    F: Send + Sync,
-{
-    fn matches(&self, request: &Request) -> bool {
-        self(request)
-    }
-}
+pub mod path;
+pub mod query;
 
 pub struct AnyMatcher;
 
@@ -168,6 +154,22 @@ where
     QueryParamExactMatcher::new(key, value)
 }
 
+pub fn query_param_case_insensitive<K, V>(key: K, value: V) -> QueryParamCaseInsensitiveMatcher
+where
+    K: Into<String>,
+    V: Into<String>,
+{
+    QueryParamCaseInsensitiveMatcher::new(key, value)
+}
+
+pub fn query_param_regex<K, V>(key: K, value: V) -> QueryParamRegexMatcher
+where
+    K: Into<String>,
+    V: Into<String>,
+{
+    QueryParamRegexMatcher::new(key, value)
+}
+
 pub fn query_param_contains<K, V>(key: K, value: V) -> QueryParamContainsMatcher
 where
     K: Into<String>,
@@ -176,9 +178,38 @@ where
     QueryParamContainsMatcher::new(key, value)
 }
 
-pub fn query_param_is_missing<K>(key: K) -> QueryParamMissingMatcher
+pub fn query_param_is_missing<K>(key: K) -> QueryParamExistsMatcher
 where
     K: Into<String>,
 {
-    QueryParamMissingMatcher::new(key)
+    QueryParamExistsMatcher::does_not_exist(key)
+}
+
+pub fn query_param_exists<K>(key: K) -> QueryParamExistsMatcher
+    where
+        K: Into<String>,
+{
+    QueryParamExistsMatcher::does_exist(key)
+}
+
+pub fn query_param_is_missing<K>(key: K) -> QueryParamExistsMatcher
+    where
+        K: Into<String>,
+{
+    QueryParamExistsMatcher::does_not_exist(key)
+}
+
+pub fn basic_auth<T, U>(username: T, password: U) -> BasicAuthMatcher
+where
+    T: AsRef<str>,
+    U: AsRef<str>,
+{
+    BasicAuthMatcher::from_credentials(username, password)
+}
+
+pub fn bearer_token<T>(token: T) -> BearerTokenMatcher
+where
+    T: AsRef<str>,
+{
+    BearerTokenMatcher::from_token(token)
 }

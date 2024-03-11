@@ -1,4 +1,4 @@
-use crate::matchers::Match;
+use crate::core::mock::Match;
 use crate::net::request::Request;
 use http::Method;
 
