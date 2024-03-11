@@ -1,4 +1,4 @@
-use crate::matchers::Match;
+use crate::core::mock::Match;
 use crate::net::request::Request;
 use assert_json_diff::{assert_json_matches_no_panic, CompareMode};
 use log::debug;

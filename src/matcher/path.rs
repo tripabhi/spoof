@@ -1,4 +1,4 @@
-use crate::matchers::Match;
+use crate::core::mock::Match;
 use crate::net::request::Request;
 use regex::Regex;
 use url::Url;
@@ -13,7 +13,7 @@ impl PathExactMatcher {
         let path = path.into();
 
         if path.contains('?') {
-            panic!("Cannot match path - {} (Path contains '?', use spoof::matchers::query_param to match on query parameters)", path);
+            panic!("Cannot match path - {} (Path contains '?', use spoof::matcher::query_param to match on query parameters)", path);
         }
 
         if let Ok(url) = Url::parse(&path) {
