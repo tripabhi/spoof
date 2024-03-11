@@ -1,5 +1,5 @@
 use crate::matcher::query::QueryParamRegexMatcher;
-use crate::matcher::{query_param_contains, query_param_regex};
+use crate::matcher::query_param_regex;
 use crate::model::request::matcher::GenericMatcherStub;
 use crate::model::request::query::HttpQueryParamsStub;
 use itertools::Itertools;

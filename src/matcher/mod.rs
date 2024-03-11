@@ -6,7 +6,7 @@ use crate::matcher::header::{
 };
 use crate::matcher::method::MethodMatcher;
 use crate::matcher::path::{PathExactMatcher, PathRegexMatcher};
-use crate::matcher::query::{QueryParamCaseInsensitiveMatcher, QueryParamContainsMatcher, QueryParamExactMatcher, QueryParamExistsMatcher, QueryParamMissingMatcher, QueryParamRegexMatcher};
+use crate::matcher::query::{QueryParamCaseInsensitiveMatcher, QueryParamContainsMatcher, QueryParamExactMatcher, QueryParamExistsMatcher, QueryParamRegexMatcher};
 use crate::net::request::Request;
 use http::{HeaderName, HeaderValue, Method};
 use serde::Serialize;
@@ -190,13 +190,6 @@ pub fn query_param_exists<K>(key: K) -> QueryParamExistsMatcher
         K: Into<String>,
 {
     QueryParamExistsMatcher::does_exist(key)
-}
-
-pub fn query_param_is_missing<K>(key: K) -> QueryParamExistsMatcher
-    where
-        K: Into<String>,
-{
-    QueryParamExistsMatcher::does_not_exist(key)
 }
 
 pub fn basic_auth<T, U>(username: T, password: U) -> BasicAuthMatcher

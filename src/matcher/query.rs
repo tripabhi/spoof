@@ -76,22 +76,6 @@ impl Match for QueryParamExistsMatcher {
     }
 }
 
-pub struct QueryParamMissingMatcher(QueryParamExistsMatcher);
-
-impl QueryParamMissingMatcher {
-    pub fn new<K>(key: K) -> Self
-    where
-        K: Into<String>,
-    {
-        Self(QueryParamExistsMatcher::new(key))
-    }
-}
-
-impl Match for QueryParamMissingMatcher {
-    fn matches(&self, request: &Request) -> bool {
-        !self.0.matches(request)
-    }
-}
 
 pub struct QueryParamCaseInsensitiveMatcher(String, String);
 
