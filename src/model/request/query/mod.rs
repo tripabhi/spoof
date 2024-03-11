@@ -11,7 +11,6 @@ use crate::matcher::query::{
 };
 use crate::model::request::matcher::GenericMatcherStub;
 use crate::model::request::MockRegistrable;
-use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 use std::hash::{Hash, Hasher};

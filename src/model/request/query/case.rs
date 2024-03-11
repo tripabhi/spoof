@@ -1,4 +1,4 @@
-use crate::matcher::query::{QueryParamCaseInsensitiveMatcher, QueryParamExactMatcher};
+use crate::matcher::query::QueryParamCaseInsensitiveMatcher;
 use crate::matcher::query_param_case_insensitive;
 use crate::model::request::matcher::GenericMatcherStub;
 use crate::model::request::query::HttpQueryParamsStub;
