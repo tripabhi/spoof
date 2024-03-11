@@ -15,8 +15,6 @@ use std::time::Duration;
 use futures_util::{pin_mut, FutureExt};
 use tokio::net::{TcpListener, TcpStream};
 
-mod common;
-
 pub(crate) async fn start_server<F>(port: u16, expose: bool, shutdown: F) -> Result<(), String>
 where
     F: Future<Output = ()> + Send + 'static,
